@@ -52,3 +52,25 @@ This project uses the [`sas-lib`](https://attest.solana.com/docs) package and `@
   exists: true
 }
 ```
+
+---
+
+## 📁 Schema
+
+```typescript
+Parsed Schema Fields: BorshSchema {
+  schema: { struct: { address: 'string', isVerified: 'bool', state: 'u8' } }
+}
+```
+
+---
+
+## 📁 Example Decoded Attestation Data From Schema
+
+```typescript
+Parsed Attestation Fields: {
+  address: '2FVMzff3tPBDUE4Jhrc44gZPuueJtExU89y3u6ygwiX6',
+  isVerified: true,
+  state: 0
+}
+```

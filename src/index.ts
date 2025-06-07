@@ -5,6 +5,8 @@ import {
   fetchMaybeAttestation,
   fetchMaybeCredential,
   fetchMaybeSchema,
+  deserializeAttestationData,
+  convertSasSchemaToBorshSchema,
 } from "sas-lib";
 import { createSolanaRpc, mainnet, Address } from "@solana/kit";
 
@@ -79,9 +81,20 @@ const blockData = JSON.parse(raw);
   } else if (attestation?.exists) {
     console.log("🔐 Attestation:", attestation);
 
-    const decoder = new TextDecoder("utf-8");
-    const utf8String = decoder.decode(attestation.data.data);
-    console.log("✅ Decoded Attestation Data:", utf8String);
+    const schemaAddress = attestation.data.schema as Address<string>;
+    const schema = await tryFetch(() => fetchMaybeSchema(rpc, schemaAddress));
+
+    if (schema?.exists) {
+      const attestationData = deserializeAttestationData(
+        schema.data,
+        new Uint8Array(attestation.data.data)
+      );
+      console.log("📦 Parsed Attestation Fields:", attestationData);
+      const schemaData = convertSasSchemaToBorshSchema(schema.data);
+      console.log("📦 Parsed Schema Fields:", schemaData);
+    } else {
+      console.warn("⚠️ Schema not found for attestation.");
+    }
   } else {
     console.log("❌ No matching SAS account type found.");
   }
